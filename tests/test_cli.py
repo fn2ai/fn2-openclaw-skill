@@ -126,10 +126,28 @@ class HttpMessageTests(unittest.TestCase):
         self.assertIn("bad key", msg)
 
     def test_403_mentions_scope(self):
-        self.assertIn("scope", fn2._http_message(403, {"error": "Missing scope: agents"}).lower())
+        out = fn2._http_message(403, {"error": "Missing scope: agents"})
+        self.assertIn("may be missing a required scope", out)
+
+    def test_403_model_entitlement_does_not_suggest_scope(self):
+        explanation = "The Advanced model requires a plan upgrade"
+        out = fn2._http_message(403, {"error": explanation})
+        self.assertIn(explanation, out)
+        self.assertNotIn("scope", out.lower())
 
     def test_429_mentions_quota(self):
         self.assertIn("Quota", fn2._http_message(429, {"error": "limit"}))
+
+    def test_429_prefers_human_message_over_machine_error(self):
+        explanation = "You've reached your monthly token limit on the Pro plan."
+        out = fn2._http_message(
+            429,
+            {"error": "quota_exceeded", "message": explanation},
+        )
+        self.assertEqual(
+            out,
+            f"Quota exceeded (429): {explanation} See your plan limits with `fn2 usage`.",
+        )
 
 
 class RequestTests(unittest.TestCase):

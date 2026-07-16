@@ -212,17 +212,25 @@ def stream_chat(message: str, model=None, timeout=RESEARCH_TIMEOUT):
 
 def _http_message(code: int, payload) -> str:
     payload = payload if isinstance(payload, dict) else {}
-    msg = payload.get("error") or payload.get("message") or "request failed"
+    error = payload.get("error")
+    message = payload.get("message")
+    # Quota responses use `error` as a machine code and `message` as the useful
+    # plan-specific explanation. Other endpoints traditionally put prose in
+    # `error`, so preserve that ordering everywhere else.
+    msg = (message if code == 429 else error) or message or error or "request failed"
+    detail = str(msg).rstrip()
+    if not detail.endswith((".", "!", "?")):
+        detail += "."
     if code == 401:
         return (f"Your FN2 API key was rejected (401): {msg}. Check it's valid and active "
                 f"— create or manage keys at {SIGNUP_URL}")
     if code == 403:
-        return (
-            f"Forbidden (403): {msg}. Your API key may be missing a required scope "
-            f"(chat / agents / models)."
-        )
+        result = f"Forbidden (403): {detail}"
+        if "scope" in str(msg).lower():
+            result += " Your API key may be missing a required scope (chat / agents / models)."
+        return result
     if code == 429:
-        return f"Quota exceeded (429): {msg}. See your plan limits with `fn2 usage`."
+        return f"Quota exceeded (429): {detail} See your plan limits with `fn2 usage`."
     if code == 404:
         return f"Not found (404): {msg}."
     return f"API error ({code}): {msg}"
