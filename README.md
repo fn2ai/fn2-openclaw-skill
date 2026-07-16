@@ -37,7 +37,6 @@ openclaw skills install @fn2/fn2
 git clone https://github.com/fn2ai/fn2-openclaw-skill.git
 mkdir -p ~/.openclaw/workspace/skills/fn2
 cp -r fn2-openclaw-skill/{SKILL.md,scripts,references} ~/.openclaw/workspace/skills/fn2/
-chmod +x ~/.openclaw/workspace/skills/fn2/scripts/fn2
 ```
 
 OpenClaw discovers the skill by its `name`/`description` and loads it on demand.
@@ -78,14 +77,14 @@ OpenClaw loads the skill and runs the bundled CLI with its `exec` tool.
 ### Or run the CLI directly
 
 ```bash
-fn2=~/.openclaw/workspace/skills/fn2/scripts/fn2
+fn2=~/.openclaw/workspace/skills/fn2/scripts/fn2.py
 
-$fn2 research "What's the macro setup going into the next Fed meeting?"
-$fn2 agents create --name "Macro Brief" \
+python3 "$fn2" research "What's the macro setup going into the next Fed meeting?"
+python3 "$fn2" agents create --name "Macro Brief" \
      --prompt "Morning macro brief: overnight moves, key data, what to watch" \
      --every weekdays --timezone America/New_York
-$fn2 agents list
-$fn2 models
+python3 "$fn2" agents list
+python3 "$fn2" models
 ```
 
 Add `--json` to any command for machine-readable output. See
@@ -96,7 +95,7 @@ reference.
 
 ```
 SKILL.md            # the skill (agentskills.io standard)
-scripts/fn2         # the CLI (Python 3 stdlib, no deps)
+scripts/fn2.py      # the CLI (Python 3 stdlib, no deps)
 references/api.md   # full command + API reference
 tests/              # offline unit tests (mocked HTTP)
 ```
@@ -118,8 +117,16 @@ Publishing uses the `clawhub` CLI (distinct from the `openclaw` runtime that
 *installs* skills):
 
 ```bash
-clawhub skill publish .
+clawhub publisher create fn2 --display-name "FN2" # one-time setup
+clawhub skill publish . --owner fn2 --slug fn2 \
+  --name "FN2 skill for OpenClaw 🦞" --dry-run
+clawhub skill publish . --owner fn2 --slug fn2 \
+  --name "FN2 skill for OpenClaw 🦞"
 ```
+
+The owner and slug produce the canonical install reference
+`openclaw skills install @fn2/fn2`. Do not publish without `--owner fn2`, or the
+skill will be released under the authenticated user's personal publisher.
 
 ## Compatibility
 

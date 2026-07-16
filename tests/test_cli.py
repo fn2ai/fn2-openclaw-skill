@@ -3,7 +3,7 @@ Unit tests for the bundled `fn2` CLI.
 
 These run fully offline — every network call is mocked — so they need no API key
 and are safe to run in CI. They load the CLI by path so the same test file works
-whether the script lives at skills/fn2/scripts/fn2 (Hermes) or scripts/fn2
+whether the script lives at skills/fn2/scripts/fn2.py (Hermes) or scripts/fn2.py
 (OpenClaw).
 """
 
@@ -21,8 +21,8 @@ from unittest import mock
 
 ROOT = Path(__file__).resolve().parent.parent
 _CANDIDATES = [
-    ROOT / "skills" / "fn2" / "scripts" / "fn2",  # Hermes layout
-    ROOT / "scripts" / "fn2",                       # OpenClaw layout
+    ROOT / "skills" / "fn2" / "scripts" / "fn2.py",  # Hermes layout
+    ROOT / "scripts" / "fn2.py",                       # OpenClaw layout
 ]
 
 
