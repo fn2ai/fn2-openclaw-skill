@@ -40,9 +40,9 @@ cp -r fn2-openclaw-skill/{SKILL.md,scripts,references} ~/.openclaw/workspace/ski
 ```
 
 OpenClaw discovers the skill by its `name`/`description` and loads it on demand.
-Either path works — the ClawHub scope `@fn2/fn2` installs under the `fn2/` group,
-the manual copy uses the bare `fn2/` folder; the `name: fn2` in `SKILL.md` is what
-identifies the skill.
+Either path works — ClawHub keeps the owner-qualified path at
+`skills/@fn2/fn2`, while the manual copy uses the bare `skills/fn2` path. The
+`name: fn2` in `SKILL.md` identifies the skill at runtime in either layout.
 
 ## Get an API key
 
