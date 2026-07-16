@@ -1,10 +1,22 @@
 ---
 name: fn2
 description: Research stocks, markets, and the economy with FN2's grounded AI, and create, schedule, and manage research agents.
-homepage: https://fn2.ai
-requires:
-  bins: [python3]
-  env: [FN2_API_KEY]
+metadata:
+  openclaw:
+    requires:
+      bins:
+        - python3
+      env:
+        - FN2_API_KEY
+    primaryEnv: FN2_API_KEY
+    envVars:
+      - name: FN2_API_KEY
+        required: true
+        description: FN2 API key used to authenticate research and agent requests.
+      - name: FN2_API_BASE
+        required: false
+        description: Optional FN2 API base URL override for self-hosted or staging environments.
+    homepage: https://fn2.ai
 ---
 
 # FN2 — market research & research agents
@@ -14,9 +26,9 @@ economy. It answers questions with **grounded, sourced** analysis (live prices,
 earnings transcripts, SEC filings, economic data, prediction markets) and lets
 you run **agents** that research on a schedule and report back.
 
-This skill calls FN2 through a small bundled CLI at `{baseDir}/scripts/fn2`
-(Python 3 standard library only — nothing to install). Run it with the `exec`
-tool.
+This skill calls FN2 through a small bundled CLI at
+`python3 {baseDir}/scripts/fn2.py` (Python 3 standard library only — nothing
+to install). Run it with the `exec` tool.
 
 ## When to use this skill
 
@@ -55,9 +67,9 @@ machine-readable output to parse.
 ### Research (the most common use)
 
 ```bash
-{baseDir}/scripts/fn2 research "How did NVDA do this week, and what drove it?"
-{baseDir}/scripts/fn2 research "What's the macro backdrop into the next Fed meeting?"
-{baseDir}/scripts/fn2 research "Summarize Apple's latest earnings call" --model z-ai/glm-5.2
+python3 {baseDir}/scripts/fn2.py research "How did NVDA do this week, and what drove it?"
+python3 {baseDir}/scripts/fn2.py research "What's the macro backdrop into the next Fed meeting?"
+python3 {baseDir}/scripts/fn2.py research "Summarize Apple's latest earnings call" --model z-ai/glm-5.2
 ```
 
 A research call can take 30–120 seconds because FN2 pulls live data and reads
@@ -67,15 +79,15 @@ sources. The answer comes back as Markdown.
 
 ```bash
 # Run once, right now:
-{baseDir}/scripts/fn2 agents create --prompt "Deep dive on AMD vs NVDA in AI accelerators"
+python3 {baseDir}/scripts/fn2.py agents create --prompt "Deep dive on AMD vs NVDA in AI accelerators"
 
 # Every weekday morning:
-{baseDir}/scripts/fn2 agents create --name "Macro Brief" \
+python3 {baseDir}/scripts/fn2.py agents create --name "Macro Brief" \
   --prompt "Morning macro brief: overnight moves, key data, what to watch" \
   --every weekdays --timezone America/New_York
 
 # A specific cron schedule (Mondays at 9am):
-{baseDir}/scripts/fn2 agents create --name "Weekly Tech Recap" \
+python3 {baseDir}/scripts/fn2.py agents create --name "Weekly Tech Recap" \
   --prompt "Recap the week in big-cap tech and call out next week's catalysts" \
   --cron "0 9 * * 1" --timezone America/New_York
 ```
@@ -83,20 +95,20 @@ sources. The answer comes back as Markdown.
 ### Manage agents and read their results
 
 ```bash
-{baseDir}/scripts/fn2 agents list                       # see your agents
-{baseDir}/scripts/fn2 agents run <agent-id>             # trigger a run now
-{baseDir}/scripts/fn2 runs list <agent-id>              # list that agent's runs
-{baseDir}/scripts/fn2 runs get <agent-id> <run-id>      # read a run's full answer
-{baseDir}/scripts/fn2 agents pause <agent-id>           # pause / resume
-{baseDir}/scripts/fn2 agents resume <agent-id>
-{baseDir}/scripts/fn2 agents delete <agent-id>          # delete it and its history
+python3 {baseDir}/scripts/fn2.py agents list                  # see your agents
+python3 {baseDir}/scripts/fn2.py agents run <agent-id>        # trigger a run now
+python3 {baseDir}/scripts/fn2.py runs list <agent-id>         # list that agent's runs
+python3 {baseDir}/scripts/fn2.py runs get <agent-id> <run-id> # read a run's full answer
+python3 {baseDir}/scripts/fn2.py agents pause <agent-id>       # pause / resume
+python3 {baseDir}/scripts/fn2.py agents resume <agent-id>
+python3 {baseDir}/scripts/fn2.py agents delete <agent-id>      # delete it and its history
 ```
 
 ### Account & models
 
 ```bash
-{baseDir}/scripts/fn2 models     # which models you can use (★ = your default)
-{baseDir}/scripts/fn2 usage      # your plan and token usage
+python3 {baseDir}/scripts/fn2.py models # which models you can use (★ = your default)
+python3 {baseDir}/scripts/fn2.py usage  # your plan and token usage
 ```
 
 ## Good habits
@@ -108,7 +120,7 @@ sources. The answer comes back as Markdown.
 - A `403 Missing scope` means the user's key needs the relevant scope (`chat` for
   research, `agents` for agents, `models` for the model list) — they can edit it
   at https://fn2.ai.
-- A `429` is a quota limit — show `{baseDir}/scripts/fn2 usage`.
+- A `429` is a quota limit — show `python3 {baseDir}/scripts/fn2.py usage`.
 
 See [`references/api.md`](references/api.md) for the full command and endpoint
 reference.

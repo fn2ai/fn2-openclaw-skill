@@ -35,7 +35,7 @@ jobs:
           python-version: "3.12"
       - name: Bundled CLI registers every FN2 tool (no network)
         run: |
-          CLI=scripts/fn2
+          CLI=scripts/fn2.py
           chmod +x "$CLI"
           help="$(python3 "$CLI" --help)"
           for cmd in research models usage agents runs; do
@@ -65,6 +65,6 @@ jobs:
             echo "FN2_API_KEY secret not configured — skipping live research smoke."
             exit 0
           fi
-          out="$(python3 scripts/fn2 research 'What is the S&P 500 doing today?')"
+          out="$(python3 scripts/fn2.py research 'What is the S&P 500 doing today?')"
           echo "$out" | head -c 500
           [ -n "$out" ] || { echo "::error::empty research response"; exit 1; }
